@@ -11,7 +11,12 @@
   =========================*/
 int server_setup() {
   int from_client = 0;
-  mkfifo(WKP);
+  int a = mkfifo(WKP, 0644);
+  if (a==-1) {
+    perror("mkfifo failed\n");
+    exit(1);
+  }
+
   return from_client;
 }
 
@@ -26,12 +31,12 @@ int server_setup() {
   =========================*/
 int server_handshake(int *to_client) {
   int from_client;
-  int f = open(WKP, O_WRONLY);
+  int f = open(WKP, O_RDONLY);
   if (f<-1){
     printf("error opening");
     exit(1);
   }
-  //int bytes = write()
+  read(f, &from_client, sizeof(int));
   return from_client;
 }
 
@@ -47,6 +52,10 @@ int server_handshake(int *to_client) {
   =========================*/
 int client_handshake(int *to_server) {
   int from_server;
+  int f = open(WKP, 0_WRONLY);
+  char* name =(char*)getpid();
+  int x = mkfifo(name, 0644);
+  write(f, name, sizeof(name));
   return from_server;
 }
 
