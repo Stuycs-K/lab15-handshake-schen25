@@ -13,10 +13,17 @@ int server_setup() {
   int from_client = 0;
   int a = mkfifo(WKP, 0644);
   if (a==-1) {
-    perror("mkfifo failed\n");
+    perror("failed to create wkp\n");
     exit(1);
   }
-
+  int f = open(WKP, O_RDONLY); // block until pipe can read
+  if (f<-1){
+    printf("error opening WKP");
+    exit(1);
+  }
+  read(f, &from_client, sizeof(int));
+  remove(WKP);
+  // wait & remove once connection has been made
   return from_client;
 }
 
@@ -31,12 +38,12 @@ int server_setup() {
   =========================*/
 int server_handshake(int *to_client) {
   int from_client;
-  int f = open(WKP, O_RDONLY);
-  if (f<-1){
-    printf("error opening");
-    exit(1);
-  }
-  read(f, &from_client, sizeof(int));
+  // int f = open(WKP, O_RDONLY);
+  // if (f<-1){
+  //   printf("error opening");
+  //   exit(1);
+  // }
+  // read(f, &from_client, sizeof(int));
   return from_client;
 }
 
@@ -56,6 +63,7 @@ int client_handshake(int *to_server) {
   char* name =(char*)getpid();
   int x = mkfifo(name, 0644);
   write(f, name, sizeof(name));
+  close(x);
   return from_server;
 }
 
