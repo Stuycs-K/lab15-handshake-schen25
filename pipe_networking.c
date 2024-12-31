@@ -16,14 +16,13 @@ int server_setup() {
     perror("failed to create wkp\n");
     exit(1);
   }
-  int f = open(WKP, O_RDONLY); // block until pipe can read
-  if (f<-1){
+  int f = open(WKP, O_RDONLY); // block until WKP can read
+  if (f<0){
     printf("error opening WKP");
     exit(1);
   }
   read(f, &from_client, sizeof(int));
   remove(WKP);
-  // wait & remove once connection has been made
   return from_client;
 }
 
@@ -37,13 +36,9 @@ int server_setup() {
   returns the file descriptor for the upstream pipe (see server setup).
   =========================*/
 int server_handshake(int *to_client) {
-  int from_client;
-  // int f = open(WKP, O_RDONLY);
-  // if (f<-1){
-  //   printf("error opening");
-  //   exit(1);
-  // }
-  // read(f, &from_client, sizeof(int));
+  int from_client = server_setup();
+  int pp = open()
+
   return from_client;
 }
 
@@ -59,11 +54,19 @@ int server_handshake(int *to_client) {
   =========================*/
 int client_handshake(int *to_server) {
   int from_server;
-  int f = open(WKP, 0_WRONLY);
   char* name =(char*)getpid();
   int x = mkfifo(name, 0644);
-  write(f, name, sizeof(name));
-  close(x);
+  int f = open(WKP, O_WRONLY);
+  if (f<0){
+    printf("error opening WKP");
+    exit(1);
+  }
+  write(f, name, sizeof(name)); // write PP to WKP
+  int pp = open(name, O_RDONLY); // block until PP can read
+  if (pp<0){
+    printf("error opening WKP");
+    exit(1);
+  }
   return from_server;
 }
 
