@@ -131,6 +131,7 @@ int server_connect(int from_client) {
   int bytes2 = write(to_client, randNum, sizeof(int)); // sending SYN_ACK
   if (bytes2<0){
     printf("error writing SYN_ACK\n");
+    printf("errno: %d %s", errno, strerror(errno));
     exit(1);
   }
   printf("Server reading final ACK...\n");
