@@ -37,14 +37,7 @@ int server_setup() {
   =========================*/
 int server_handshake(int *to_client) {
   int from_client = server_setup();
-  server_connect(from_client);
-  int pp = 0;
-  // read(from_client, &pp, sizeof(int));
-  // char *name = (char*)pp;
-  // int pp = open(name, O_WRONLY);
-
-  *to_client = pp;
-
+  *to_client = server_connect(from_client);
   return from_client;
 }
 
@@ -77,6 +70,7 @@ int client_handshake(int *to_server) {
   }
   remove(name);
   read(from_server, &syn_ack, sizeof(int)); // reading syn_ack
+  write(f, syn_ack+1, sizeof(int)); // send final ACK?
 
   return from_server;
 }
@@ -93,11 +87,13 @@ int client_handshake(int *to_server) {
 int server_connect(int from_client) {
   int to_client  = 0;
   int pp = 0;
+  int final_ack;
   int randNum = 13908; // change to random later
   read(from_client, &pp, sizeof(int)); //read the PP name/PID
   char *name = (char*)pp;
   to_client = open(name, O_WRONLY); //open pp
   write(to_client, randNum, sizeof(int)); // sending SYN_ACK
+  read(from_client, &final_ack, sizeof(int)); // read final ACK?
 
   return to_client;
 }
