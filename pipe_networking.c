@@ -63,7 +63,7 @@ int client_handshake(int *to_server) {
   printf("Client opening WKP...\n");
   int f = open(WKP, O_WRONLY);
   if (f<0){
-    printf("error opening WKP");
+    printf("error opening WKP\n");
     exit(1);
   }
   *to_server = f; // set to fds for upstream pipe
@@ -72,7 +72,7 @@ int client_handshake(int *to_server) {
   printf("Client opening PP...\n");
   from_server = open(name, O_RDONLY); // block until PP can read
   if (from_server<0){
-    printf("error opening PP");
+    printf("error opening PP\n");
     exit(1);
   }
   printf("Client removing PP...\n");
@@ -105,6 +105,10 @@ int server_connect(int from_client) {
   sprintf(name, "%d", getpid());
   printf("Server opening PP...\n");
   to_client = open(name, O_WRONLY); //open pp
+  if (to_client<0){
+    printf("error opening PP\n");
+    exit(1);
+  }
   printf("Server sending SYN_ACK...\n");
   write(to_client, randNum, sizeof(int)); // sending SYN_ACK
   printf("Server reading final ACK...\n");
