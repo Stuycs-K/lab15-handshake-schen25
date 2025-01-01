@@ -16,12 +16,12 @@ int server_setup() {
     perror("failed to create wkp\n");
     exit(1);
   }
-  int f = open(WKP, O_RDONLY); // block until WKP can read
-  if (f<0){
-    printf("error opening WKP");
+  from_client = open(WKP, O_RDONLY); // block until WKP can read
+  if (from_client<0){
+    printf("error opening WKP\n");
     exit(1);
   }
-  read(f, &from_client, sizeof(int));
+  // read(f, &from_client, sizeof(int));
   remove(WKP);
   return from_client;
 }
@@ -37,7 +37,13 @@ int server_setup() {
   =========================*/
 int server_handshake(int *to_client) {
   int from_client = server_setup();
-  int pp = open()
+  server_connect(from_client);
+  int pp = 0;
+  // read(from_client, &pp, sizeof(int));
+  // char *name = (char*)pp;
+  // int pp = open(name, O_WRONLY);
+
+  *to_client = pp;
 
   return from_client;
 }
@@ -54,19 +60,24 @@ int server_handshake(int *to_client) {
   =========================*/
 int client_handshake(int *to_server) {
   int from_server;
+  int syn_ack;
   char* name =(char*)getpid();
-  int x = mkfifo(name, 0644);
+  int x = mkfifo(name, 0644); // make the private pipes
   int f = open(WKP, O_WRONLY);
   if (f<0){
     printf("error opening WKP");
     exit(1);
   }
+  *to_server = f; // set to fds for upstream pipe
   write(f, name, sizeof(name)); // write PP to WKP
-  int pp = open(name, O_RDONLY); // block until PP can read
-  if (pp<0){
-    printf("error opening WKP");
+  from_server = open(name, O_RDONLY); // block until PP can read
+  if (from_server<0){
+    printf("error opening PP");
     exit(1);
   }
+  remove(name);
+  read(from_server, &syn_ack, sizeof(int)); // reading syn_ack
+
   return from_server;
 }
 
@@ -81,5 +92,12 @@ int client_handshake(int *to_server) {
   =========================*/
 int server_connect(int from_client) {
   int to_client  = 0;
+  int pp = 0;
+  int randNum = 13908; // change to random later
+  read(from_client, &pp, sizeof(int)); //read the PP name/PID
+  char *name = (char*)pp;
+  to_client = open(name, O_WRONLY); //open pp
+  write(to_client, randNum, sizeof(int)); // sending SYN_ACK
+
   return to_client;
 }
