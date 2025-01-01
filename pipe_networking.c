@@ -69,7 +69,11 @@ int client_handshake(int *to_server) {
   }
   *to_server = f; // set to fds for upstream pipe
   printf("Client writing PP name to WKP...\n");
-  write(f, name, sizeof(name)); // write PP to WKP
+  int bytes = write(f, name, sizeof(name)); // write PP to WKP
+  if (bytes<0){
+    printf("error writing to WKP\n");
+    exit(1);
+  }
   printf("Client opening PP...\n");
   from_server = open(name, O_RDONLY); // block until PP can read
   if (from_server<0){
@@ -79,9 +83,18 @@ int client_handshake(int *to_server) {
   printf("Client removing PP...\n");
   remove(name);
   printf("Client reading SYN_ACK...\n");
-  read(from_server, &syn_ack, sizeof(int)); // reading syn_ack
+  int bytes2 = read(from_server, &syn_ack, sizeof(int)); // reading syn_ack
+  if (bytes2<0){
+    printf("error reading SYN_ACK\n");
+    exit(1);
+  }
   printf("Client sending final ACK...\n");
-  write(f, syn_ack+1, sizeof(int)); // send final ACK?
+  int final_ack = syn_ack+1;
+  int bytes3 = write(f, final_ack, sizeof(int)); // send final ACK?
+  if (bytes3<0){
+    printf("error writing final ACK\n");
+    exit(1);
+  }
   printf("End of client handshake.\n");
   return from_server;
 }
@@ -101,7 +114,12 @@ int server_connect(int from_client) {
   int final_ack;
   int randNum = 13908; // change to random later
   printf("Server reading PP PID...\n");
-  read(from_client, &name, sizeof(int)); //read the PP name/PID
+  int bytes = read(from_client, &name, sizeof(name)); //read the PP name/PID
+  // ^^^ fix this??
+  if (bytes<0){
+    printf("error reading from WKP\n");
+    exit(1);
+  }
   printf("This is name: %s\n", name);
   printf("Server opening PP...\n");
   to_client = open(name, O_WRONLY); //open pp
@@ -110,9 +128,17 @@ int server_connect(int from_client) {
     exit(1);
   }
   printf("Server sending SYN_ACK...\n");
-  write(to_client, randNum, sizeof(int)); // sending SYN_ACK
+  int bytes2 = write(to_client, randNum, sizeof(int)); // sending SYN_ACK
+  if (bytes2<0){
+    printf("error writing SYN_ACK\n");
+    exit(1);
+  }
   printf("Server reading final ACK...\n");
-  read(from_client, &final_ack, sizeof(int)); // read final ACK?
+  int bytes3 = read(from_client, &final_ack, sizeof(int)); // read final ACK?
+  if (bytes3<0){
+    printf("error reading final ACK\n");
+    exit(1);
+  }
 
   return to_client;
 }
