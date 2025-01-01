@@ -58,6 +58,7 @@ int client_handshake(int *to_server) {
   int syn_ack;
   char name[200];
   sprintf(name, "%d", getpid());
+  printf("This is name: %s\n", name);
   printf("Client making private pipe...\n");
   int x = mkfifo(name, 0644); // make the private pipes
   printf("Client opening WKP...\n");
@@ -96,13 +97,12 @@ int client_handshake(int *to_server) {
   =========================*/
 int server_connect(int from_client) {
   int to_client  = 0;
-  int pp = 0;
+  char name[200];
   int final_ack;
   int randNum = 13908; // change to random later
   printf("Server reading PP PID...\n");
-  read(from_client, &pp, sizeof(int)); //read the PP name/PID
-  char name[200];
-  sprintf(name, "%d", getpid());
+  read(from_client, &name, sizeof(int)); //read the PP name/PID
+  printf("This is name: %s\n", name);
   printf("Server opening PP...\n");
   to_client = open(name, O_WRONLY); //open pp
   if (to_client<0){
