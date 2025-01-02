@@ -88,9 +88,10 @@ int client_handshake(int *to_server) {
     printf("error reading SYN_ACK\n");
     exit(1);
   }
+  //printf("This is syn_ack: %d\n", syn_ack);
   printf("Client sending final ACK...\n");
   int final_ack = syn_ack+1;
-  int bytes3 = write(f, final_ack, sizeof(int)); // send final ACK?
+  int bytes3 = write(f, &final_ack, sizeof(int)); // send final ACK?
   if (bytes3<0){
     printf("error writing final ACK\n");
     exit(1);
@@ -128,7 +129,7 @@ int server_connect(int from_client) {
     exit(1);
   }
   printf("Server sending SYN_ACK...\n");
-  int bytes2 = write(to_client, randNum, sizeof(int)); // sending SYN_ACK
+  int bytes2 = write(to_client, &randNum, sizeof(int)); // sending SYN_ACK
   if (bytes2<0){
     printf("error writing SYN_ACK\n");
     printf("errno: %d %s", errno, strerror(errno));
@@ -140,6 +141,6 @@ int server_connect(int from_client) {
     printf("error reading final ACK\n");
     exit(1);
   }
-
+  printf("This is final ACK: %d\n", final_ack);
   return to_client;
 }
