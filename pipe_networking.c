@@ -88,7 +88,7 @@ int client_handshake(int *to_server) {
     printf("error reading SYN_ACK\n");
     exit(1);
   }
-  //printf("This is syn_ack: %d\n", syn_ack);
+  printf("This is SYN_ACK: %d\n", syn_ack);
   printf("Client sending final ACK...\n");
   int final_ack = syn_ack+1;
   int bytes3 = write(f, &final_ack, sizeof(int)); // send final ACK?
