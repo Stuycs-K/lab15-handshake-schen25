@@ -5,7 +5,8 @@ int main() {
   int from_client;
 
   while (1){
-    
+    from_client = server_handshake( &to_client );
+    close(to_client);
+    close(from_client);
   }
-  from_client = server_handshake( &to_client );
 }
