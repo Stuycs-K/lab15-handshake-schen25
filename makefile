@@ -3,7 +3,7 @@ all: basic_client basic_server persistant
 compile: basic_client forking
 
 client: basic_client
-	./basic_client
+	./client
 
 server: forking
 	./forking
