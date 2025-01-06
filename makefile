@@ -1,6 +1,12 @@
-all: client server persistant
+all: basic_client basic_server persistant
 
 compile: basic_client forking
+
+client: basic_client
+	./basic_client
+
+server: forking
+	./forking
 
 basic_client: basic_client.o pipe_networking.o
 	gcc -o client basic_client.o pipe_networking.o
