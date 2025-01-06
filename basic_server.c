@@ -1,12 +1,4 @@
 #include "pipe_networking.h"
-#include <signal.h>
-
-// static void sighandler(int signo){
-//   if (signo==SIGINT){
-//
-//     kill(getpid(), SIGTERM);
-//   }
-// }
 
 int main() {
   int to_client;
