@@ -31,10 +31,16 @@ int main() {
     else if (p==0){ // step 4
       server_handshake_half(&to_client, from_client);
       // communication after handshake
-      read(from_client, str, sizeof(str));
-      sleep(1);
-      printf("Subserver received: %s\n", str);
-
+      while (1){
+        int r = read(from_client, str, sizeof(str));
+        if (r<=0){
+          close(to_client);
+          close(from_client);
+          exit(0);
+        }
+        sleep(1);
+        printf("Subserver received: %s\n", str);
+      }
     }
 
     // while (1){

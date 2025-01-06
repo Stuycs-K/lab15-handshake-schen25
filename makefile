@@ -3,16 +3,16 @@ all: basic_client basic_server persistant
 compile: basic_client forking
 
 client: basic_client
-	./client
+	./clientprog
 
 server: forking
 	./forking
 
 basic_client: basic_client.o pipe_networking.o
-	gcc -o client basic_client.o pipe_networking.o
+	gcc -o clientprog basic_client.o pipe_networking.o
 
 basic_server: basic_server.o pipe_networking.o
-	gcc -o server basic_server.o pipe_networking.o
+	gcc -o serverprog basic_server.o pipe_networking.o
 
 persistant: persistant_server.o pipe_networking.o
 	gcc -o persistant persistant_server.o pipe_networking.o
