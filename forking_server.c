@@ -27,22 +27,21 @@ int main() {
       perror("fork failed\n");
       exit(1);
     }
-    else if (p1==0){ //child
-
-    }
-    else{
+    else if (p==0){ // step 4
+      server_handshake_half(&to_client, from_client);
+      sleep(1);
       
     }
 
-    while (1){
-      randNum = rand()%101;
-      printf("Sending %d to clients\n", randNum);
-      int w = write(to_client, &randNum, sizeof(int));
-      if (w<=0){
-        break;
-      }
-      sleep(1);
-    }
+    // while (1){
+    //   randNum = rand()%101;
+    //   printf("Sending %d to clients\n", randNum);
+    //   int w = write(to_client, &randNum, sizeof(int));
+    //   if (w<=0){
+    //     break;
+    //   }
+    //   sleep(1);
+    // }
     close(to_client);
     close(from_client);
   }

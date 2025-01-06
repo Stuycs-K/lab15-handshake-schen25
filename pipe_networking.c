@@ -145,5 +145,36 @@ int server_connect(int from_client) {
 }
 
 int server_handshake_half(int *to_client, int from_client){
-
+  int tc  = 0;
+  char name[200];
+  int final_ack;
+  int randNum = 13908; // change to random later
+  printf("Server reading PP PID...\n");
+  int bytes = read(from_client, &name, sizeof(name)); //read the PP name/PID
+  if (bytes<0){
+    printf("error reading from WKP\n");
+    exit(1);
+  }
+  printf("This is name: %s\n", name);
+  printf("Server opening PP...\n");
+  tc = open(name, O_WRONLY); //open pp
+  if (tc<0){
+    printf("error opening PP\n");
+    exit(1);
+  }
+  printf("Server sending SYN_ACK...\n");
+  int bytes2 = write(tc, &randNum, sizeof(int)); // sending SYN_ACK
+  if (bytes2<0){
+    printf("error writing SYN_ACK\n");
+    printf("errno: %d %s", errno, strerror(errno));
+    exit(1);
+  }
+  printf("Server reading final ACK...\n");
+  int bytes3 = read(from_client, &final_ack, sizeof(int)); // read final ACK?
+  if (bytes3<0){
+    printf("error reading final ACK\n");
+    exit(1);
+  }
+  printf("This is final ACK: %d\n", final_ack);
+  *to_client = tc;
 }
