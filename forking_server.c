@@ -17,6 +17,7 @@ int main() {
   int to_client;
   int from_client;
   int randNum;
+  char str[200];
   pid_t p;
 
   srand(getpid());
@@ -29,8 +30,11 @@ int main() {
     }
     else if (p==0){ // step 4
       server_handshake_half(&to_client, from_client);
+      // communication after handshake
+      read(from_client, str, sizeof(str));
       sleep(1);
-      
+      printf("Subserver received: %s\n", str);
+
     }
 
     // while (1){

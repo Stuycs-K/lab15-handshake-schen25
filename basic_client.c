@@ -11,5 +11,10 @@ int main() {
       break;
     }
     printf("Received number: %d\n", randNum);
+    //forking server part
+    int w = write(to_server, &randNum, sizeof(int));
+    if (w<=0){
+      break;
+    }
   }
 }
