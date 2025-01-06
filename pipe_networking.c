@@ -116,7 +116,6 @@ int server_connect(int from_client) {
   int randNum = 13908; // change to random later
   printf("Server reading PP PID...\n");
   int bytes = read(from_client, &name, sizeof(name)); //read the PP name/PID
-  // ^^^ fix this??
   if (bytes<0){
     printf("error reading from WKP\n");
     exit(1);
@@ -143,4 +142,8 @@ int server_connect(int from_client) {
   }
   printf("This is final ACK: %d\n", final_ack);
   return to_client;
+}
+
+int server_handshake_half(int *to_client, int from_client){
+
 }
