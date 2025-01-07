@@ -177,4 +177,5 @@ int server_handshake_half(int *to_client, int from_client){
   }
   printf("This is final ACK: %d\n", final_ack);
   *to_client = tc;
+  return 0;
 }
