@@ -8,6 +8,7 @@ static void sighandler(int signo){
   }
   if (signo==SIGPIPE){
     printf("Client exited\n");
+    kill(getpid(), SIGTERM);
   }
 }
 
@@ -40,18 +41,14 @@ int main() {
         }
         sleep(1);
         printf("Subserver received: %s\n", str);
+        int w = write(to_client, str, sizeof(str));
+        if (r<=0){
+          close(to_client);
+          close(from_client);
+          exit(0);
+        }
       }
     }
-
-    // while (1){
-    //   randNum = rand()%101;
-    //   printf("Sending %d to clients\n", randNum);
-    //   int w = write(to_client, &randNum, sizeof(int));
-    //   if (w<=0){
-    //     break;
-    //   }
-    //   sleep(1);
-    // }
     close(to_client);
     close(from_client);
   }
